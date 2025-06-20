@@ -51,6 +51,7 @@ const router = express.Router();
  *         $ref: '#/components/responses/ServerError'
  */
 
+// CREATE a new user
 router.post('/register', authController.register);
 
 /**
@@ -96,6 +97,7 @@ router.post('/register', authController.register);
  *         $ref: '#/components/responses/ServerError'
  */
 
+// LOGIN a user
 router.post('/login', authController.login);
 
 export default router;

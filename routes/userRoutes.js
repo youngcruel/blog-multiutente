@@ -1,7 +1,7 @@
 import express from 'express';
 import upload from '../middlewares/upload.js';
 import userController from '../controllers/userController.js';
-import verifyToken from '../middlewares/verifyToken.js';
+import verifyTokenMiddleware from '../middlewares/verifyToken.js';
 import multerErrorHandler from '../middlewares/multerErrorHandler.js';
 
 const router = express.Router();
@@ -39,7 +39,8 @@ const router = express.Router();
  *         $ref: '#/components/responses/ServerError'
  */
 
-router.get('/me', verifyToken, userController.getProfile);
+// READ a profile 
+router.get('/me', verifyTokenMiddleware, userController.getProfile);
 
 /**
  * @swagger
@@ -81,6 +82,7 @@ router.get('/me', verifyToken, userController.getProfile);
  *         $ref: '#/components/responses/ServerError'
  */
 
-router.patch('/me', verifyToken, upload.single('profileImage'), multerErrorHandler, userController.updateProfile);
+// UPDATE a profile
+router.patch('/me', verifyTokenMiddleware, upload.single('profileImage'), multerErrorHandler, userController.updateProfile);
 
 export default router;

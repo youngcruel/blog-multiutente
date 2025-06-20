@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multerErrorHandler from './middlewares/multerErrorHandler.js';
+import postRoutes from './routes/postRoutes.js';
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use('/blog-multiutente/users', userRoutes);
 
 // Rotte per gestire gli upload di file
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
+// Rotte per i post
+app.use('/blog-multiutente/posts', postRoutes);
 
 // Dopo i router
 app.use(multerErrorHandler);
