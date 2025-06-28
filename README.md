@@ -135,5 +135,3 @@ blog-multiutente/
 
 - GitHub: https://github.com/youngcruel  
 - LinkedIn: https://www.linkedin.com/in/marco-mereu-62b7182b5  
-
-> “its cruel season. this shit too cruel.”
