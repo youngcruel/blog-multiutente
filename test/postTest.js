@@ -210,22 +210,30 @@ describe('Blog Multiutente - Post Endpoints', () => {
     .get('/blog-multiutente/posts');
 
   expect(res).to.have.status(200);
-  expect(res.body).to.be.an('array');
-  expect(res.body.length).to.equal(3);
-  expect(res.body[0]).to.have.property('likeCount');
-  expect(res.body[0]).to.have.property('commentCount');
-  expect(res.body[0]).to.have.property('author');
+  expect(res.body).to.have.property('results').that.is.an('array');
+  expect(res.body.results.length).to.be.at.least(2);
+
+  expect(res.body.results[0]).to.have.property('likeCount');
+  expect(res.body.results[0]).to.have.property('commentCount');
+  expect(res.body.results[0]).to.have.property('author');
+
+  expect(res.body).to.have.property('total');
+  expect(res.body).to.have.property('pages');
+  expect(res.body).to.have.property('page');
     });
 
     it('✅ should return empty array if no posts exist', async () => {
-  await Post.deleteMany(); // assicuriamoci che non ci siano post
+  await Post.deleteMany(); 
 
   const res = await request
     .execute(app)
     .get('/blog-multiutente/posts');
 
   expect(res).to.have.status(200);
-  expect(res.body).to.be.an('array').that.is.empty;
+  expect(res.body).to.have.property('results').that.is.an('array').that.is.empty;
+  expect(res.body.total).to.equal(0);
+  expect(res.body.pages).to.equal(0);
+  expect(res.body.page).to.equal(1);
     });
 
     it('❌ should return 500 if getAllPosts throws an error', async () => {

@@ -33,10 +33,22 @@ const createPost = async (req, res) => {
 // GET /blog-multiutente/posts
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate('author', 'username')
-      .populate('tags', 'name')
-      .sort({ createdAt: -1 });
+
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 10; 
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    const [total, posts] = await Promise.all([
+      Post.countDocuments(query),
+      Post.find(query)
+        .populate('author', 'username')
+        .populate('tags', 'name')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+    ]);
 
     const enriched = posts.map(post => ({
       ...post.toObject(),
@@ -44,7 +56,13 @@ const getAllPosts = async (req, res) => {
       commentCount: post.comments.length,
     }));
 
-    res.status(200).json(enriched);
+      res.status(200).json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      limit,
+      results: enriched,
+    });
   } catch (err) {
     res.status(500).json({ error: 'Errore nel recupero dei post' });
   }
