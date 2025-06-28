@@ -1,27 +1,28 @@
 # 📝 Blog Multi-user API
 
-A RESTful API for managing a multi-user blog with authentication, post/comment CRUD, likes, and real-time notifications via Socket.IO.
+A RESTful API for managing a multi-user blog with authentication, posts, comments, likes, and real-time notifications via Socket.IO.
 
 ## 🚀 Features
 
 - 🔐 User registration & login (JWT-based)
-- 🧾 CRUD operations for blog posts (with image upload & tags)
+- 📄 CRUD operations for posts (with image upload & tags)
 - 💬 Comments and likes system
-- 📢 Real-time notifications with Socket.IO
-- 🧼 Input validation with Joi
-- 📄 Swagger API documentation
-- ✅ Testing with Mocha, Chai, Sinon
+- 📢 Real-time notifications via Socket.IO
+- ✅ Input validation with Joi
+- 🧪 Tests with Mocha, Chai, Sinon
+- 🧼 Swagger documentation (OpenAPI)
 - 📊 Code coverage with c8
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Node.js + Express
-- **Database:** MongoDB + Mongoose
-- **Auth:** JWT + Bcrypt
-- **Real-Time:** Socket.IO
-- **Upload:** Multer
-- **Testing:** Mocha, Chai, Sinon
-- **Docs:** Swagger (OpenAPI)
+- **Backend:** Node.js + Express  
+- **Database:** MongoDB + Mongoose  
+- **Authentication:** JWT + Bcrypt  
+- **Validation:** Joi  
+- **Real-Time:** Socket.IO  
+- **File Upload:** Multer  
+- **Documentation:** Swagger UI  
+- **Testing:** Mocha, Chai, Sinon  
 
 ## 📦 Installation
 
@@ -29,43 +30,86 @@ A RESTful API for managing a multi-user blog with authentication, post/comment C
 git clone https://github.com/youngcruel/blog-multiutente.git
 cd blog-multiutente
 npm install
-⚙️ Environment Variables
-Create a .env file in the root directory with the following:
+```
 
-env
-Copia
-Modifica
+## ⚙️ Environment Variables
+
+Create a `.env` file in the root directory with the following:
+
+```
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/blog
-JWT_SECRET=yourSuperSecret
-▶️ Run the Server
-bash
-Copia
-Modifica
+MONGO_URI=mongodb://localhost:27017/blog
+JWT_SECRET=yourSuperSecretKey
+```
+
+## ▶️ Run the Server
+
+```bash
 npm run dev       # Start in development mode
-npm start         # Start in production
-🧪 Run Tests
-bash
-Copia
-Modifica
-npm test          # Run all tests
-📚 API Documentation
-After starting the server, visit:
+npm start         # Start in production mode
+```
 
-bash
-Copia
-Modifica
-http://localhost:3000/api-docs
-(Swagger UI with full endpoint documentation)
+## 🧪 Run Tests
 
-🔔 WebSocket Notifications
-When a post receives a like or comment, a real-time notification is sent via Socket.IO to the post's author.
+```bash
+npm test
+```
 
-📁 Project Structure
-bash
-Copia
-Modifica
-.
+## 📚 API Documentation
+
+Once the server is running, access:
+
+http://localhost:3000/blog-multiutente/api-docs
+
+This opens the Swagger UI with full API documentation.
+
+## 🔔 Socket.IO Notifications
+
+Users receive real-time notifications when someone likes or comments on their post.
+
+Example:
+
+```js
+io.to(recipientId).emit('notification', {
+  type: 'like',
+  from: userId,
+  postId: post._id.toString()
+});
+```
+
+## 🧾 Example Requests (cURL)
+
+### Register
+
+```bash
+curl -X POST http://localhost:3000/blog-multiutente/auth/register \
+-H "Content-Type: application/json" \
+-d '{"email":"test@example.com", "password":"password123"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:3000/blog-multiutente/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"test@example.com", "password":"password123"}'
+```
+
+### Get All Posts
+
+```bash
+curl http://localhost:3000/blog-multiutente/posts
+```
+
+### Create a Post
+
+Use Postman or a client that supports `multipart/form-data`.  
+Fields: `title`, `content`, `tags`, `image` (file)
+
+## 📁 Folder Structure
+
+```
+blog-multiutente/
 ├── controllers/
 ├── models/
 ├── routes/
@@ -74,41 +118,22 @@ Modifica
 ├── test/
 ├── uploads/
 ├── swagger.js
+├── app.js
 └── server.js
-📬 Example Requests (cURL)
-Register
-bash
-Copia
-Modifica
-curl -X POST http://localhost:3000/blog-multiutente/auth/register \
--H "Content-Type: application/json" \
--d '{"email":"test@example.com","password":"password123"}'
-Login
-bash
-Copia
-Modifica
-curl -X POST http://localhost:3000/blog-multiutente/auth/login \
--H "Content-Type: application/json" \
--d '{"email":"test@example.com","password":"password123"}'
-Get All Posts
-bash
-Copia
-Modifica
-curl -X GET http://localhost:3000/blog-multiutente/posts
-Create Post (example with Postman recommended)
-Use multipart/form-data with title, content, optional tags and an image file.
+```
 
-✅ TODO (Next Features)
-Follow/Unfollow users
+## 🧠 TODOs
 
-Persistent notifications (DB)
+- [ ] Follow/Unfollow system  
+- [ ] Notification center with DB  
+- [ ] Admin roles  
+- [ ] Filters: by tag, author, date  
 
-Admin panel
+## 👨‍💻 Author
 
-Advanced post filtering by tags/users
+**Marco Mereu**
 
-👨‍💻 Author
-Marco Mereu
-GitHub
-LinkedIn
+- GitHub: https://github.com/youngcruel  
+- LinkedIn: https://www.linkedin.com/in/marco-mereu-62b7182b5  
 
+> “its cruel season. this shit too cruel.”
