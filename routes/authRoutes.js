@@ -100,4 +100,10 @@ router.post('/register', authController.register);
 // LOGIN a user
 router.post('/login', authController.login);
 
+// FORGOT password
+router.post('/forgot-password', authController.forgotPassword);
+
+// RESET password
+router.post('/reset-password', authController.resetPassword);
+
 export default router;

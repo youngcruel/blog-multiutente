@@ -8,6 +8,7 @@ import app from '../app.js';
 import User from '../models/User.js';
 import { hashPassword } from '../utils/hashPassword.js';
 import sinon from 'sinon';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -153,6 +154,78 @@ describe('Blog Multiutente - Auth Endpoints', () => {
   stub.restore();
     });
 
-
   });
+
+  // 🔐 FORGOT PASSWORD TESTS
+  describe('POST /blog-multiutente/auth/forgot-password', () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    await new User({ email: 'test@email.com', password: 'password123' }).save();
+  });
+
+  it('✅ should send a mail if user exists', async () => {
+    const res = await request
+      .execute(app)
+      .post('/blog-multiutente/auth/forgot-password')
+      .send({ email: 'test@email.com' });
+
+    expect(res).to.have.status(200);
+    expect(res.body.message).to.equal('Email di reimpostazione inviata con successo');
+
+    const user = await User.findOne({ email: 'test@email.com' });
+    expect(user.resetPasswordToken).to.exist;
+    expect(user.resetPasswordExpires).to.exist;
+  });
+
+  it('❌ should return 404 if user does not exist', async () => {
+    const res = await request
+      .execute(app)
+      .post('/blog-multiutente/auth/forgot-password')
+      .send({ email: 'nonesiste@email.com' });
+
+    expect(res).to.have.status(404);
+    expect(res.body.message).to.equal(undefined);
+  });
+
+});
+
+  // 🔐 RESET PASSWORD TESTS 
+  describe('POST /blog-multiutente/auth/reset-password', () => {
+  let resetToken;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    resetToken = crypto.randomBytes(32).toString('hex');
+    await new User({
+      email: 'test@email.com',
+      password: 'password123',
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: Date.now() + 1000 * 60 * 15 // 15 minuti
+    }).save();
+  });
+
+  it('✅ should replace password with a valid token', async () => {
+    const res = await request
+      .execute(app)
+      .post('/blog-multiutente/auth/reset-password')
+      .send({ token: resetToken, newPassword: 'nuovapassword123' });
+
+    expect(res).to.have.status(200);
+    expect(res.body.message).to.equal('Password reimpostata con successo');
+
+    const updatedUser = await User.findOne({ email: 'test@email.com' });
+    expect(updatedUser.resetPasswordToken).to.be.undefined;
+  });
+
+  it('❌ should return 400 if token is invalid or expired', async () => {
+    const res = await request
+      .execute(app)
+      .post('/blog-multiutente/auth/reset-password')
+      .send({ token: 'token-falso', password: 'whatever' });
+
+    expect(res).to.have.status(400);
+    expect(res.body.message).to.equal(undefined);
+  });
+});
+  
 });
