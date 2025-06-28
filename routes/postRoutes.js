@@ -191,6 +191,47 @@ router.patch(
 router.delete('/:id', verifyTokenMiddleware, postController.deletePost);
 
 //////////////////////////////////
+
+/**
+ * @swagger
+ * /blog-multiutente/posts/{id}/comments:
+ *   post:
+ *     summary: Aggiunge un commento a un post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del post
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 example: Questo è un commento
+ *     responses:
+ *       201:
+ *         description: Commento aggiunto con successo
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+
 // CREATE a comment on a post
 router.post(
   '/:id/comments',
@@ -198,6 +239,54 @@ router.post(
   validateCommentInput,
   postController.addComment
 );
+
+/**
+ * @swagger
+ * /blog-multiutente/posts/{id}/comments/{commentId}:
+ *   patch:
+ *     summary: Modifica un commento esistente
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del post
+ *       - name: commentId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del commento
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 example: Commento aggiornato
+ *     responses:
+ *       200:
+ *         description: Commento aggiornato con successo
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 
 // UPDATE a comment on a post
 router.patch(
@@ -207,6 +296,40 @@ router.patch(
   postController.updateComment
 );
 
+/**
+ * @swagger
+ * /blog-multiutente/posts/{id}/comments/{commentId}:
+ *   delete:
+ *     summary: Elimina un commento da un post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del post
+ *       - name: commentId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del commento
+ *     responses:
+ *       200:
+ *         description: Commento eliminato con successo
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+
 // DELETE a comment on a post
 router.delete(
   '/:id/comments/:commentId', 
@@ -214,12 +337,68 @@ router.delete(
   postController.deleteComment
 );
 
+/**
+ * @swagger
+ * /blog-multiutente/posts/{id}/like:
+ *   post:
+ *     summary: Aggiunge un like a un post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del post
+ *     responses:
+ *       200:
+ *         description: Like aggiunto con successo
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+
 // CREATE a like on a post
 router.post(
   '/:id/like',
   verifyTokenMiddleware,
   postController.likePost
 );
+
+/**
+ * @swagger
+ * /blog-multiutente/posts/{id}/like/remove:
+ *   delete:
+ *     summary: Rimuove un like da un post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del post
+ *     responses:
+ *       200:
+ *         description: Like rimosso con successo
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 
 // DELETE a like on a post
 router.delete(
