@@ -161,6 +161,20 @@ const addComment = async (req, res) => {
     post.comments.push(comment);
 
   await post.save();
+
+  
+    // 🔔 Notifica via socket
+    const io = req.app.get('io');
+    const recipientId = post.author._id.toString();
+    if (recipientId !== userId) {
+      io.to(recipientId).emit('notification', {
+        type: 'comment',
+        from: userId,
+        postId: post._id.toString(),
+        commentText: text,
+      });
+    }
+
     
   res.status(201).json({ 
     message: 'Commento aggiunto', 
@@ -273,6 +287,17 @@ const likePost = async (req, res) => {
     // Aggiungi il like
     post.likes.push(userId);
     await post.save();
+
+    // 🔔 Notifica via socket
+    const io = req.app.get('io');
+    const recipientId = post.author._id.toString();
+    if (recipientId !== userId) {
+      io.to(recipientId).emit('notification', {
+        type: 'like',
+        from: userId,
+        postId: post._id.toString(),
+      });
+    }
 
     res.status(200).json({ message: 'Like aggiunto con successo' });
   } catch (error) {
